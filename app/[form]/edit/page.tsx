@@ -7,102 +7,13 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectSeparator, Select
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import useAutoResizeTextArea from "@/components/useAutoResizeTextArea";
-import { ChevronDown, ChevronUp, CopyPlusIcon, LockIcon, PlusIcon, SquarePlusIcon, Trash2Icon, UnlockIcon, XIcon } from "lucide-react";
+import useAutoResizeTextArea from "@/lib/hooks/useAutoResizeTextArea";
+import { Question, Option, Form } from "@/lib/types";
+import { ChevronDown, ChevronUp, CopyPlusIcon, EllipsisVerticalIcon, LockIcon, PlusIcon, SquarePlusIcon, Trash2Icon, UnlockIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 
-interface Option {
-	id: string,
-	option: string,
-	value: boolean,
-}
-
-interface BaseQuestion {
-	id: string;
-	question: string;
-	type: "short" | "paragraph" | "select" | "checkbox";
-}
-
-interface ShortAnswerQuestion extends BaseQuestion {
-	type: "short";
-}
-
-interface ParagraphAnswerQuestion extends BaseQuestion {
-	type: "paragraph";
-}
-
-interface SelectQuestion extends BaseQuestion {
-	type: "select";
-	options: Option[];
-}
-
-interface CheckboxQuestion extends BaseQuestion {
-	type: "checkbox";
-	options: Option[];
-	maxSelections?: number;
-}
-
-type Question = ShortAnswerQuestion | ParagraphAnswerQuestion | SelectQuestion | CheckboxQuestion;
-
-const data: Question[] = [
-	{
-		id: "00",
-		question: "Name",
-		type: "short",
-	},
-	{
-		id: "01",
-		question: "Address",
-		type: "paragraph",
-	},
-	{
-		id: "02",
-		question: "Faculty",
-		type: "select",
-		options: [
-			{
-				id: "O1",
-				option: "FACULTY OF CHEMICAL ENGINEERING",
-				value: false,
-			},
-			{
-				id: "02",
-				option: "FACULTY OF COMPUTING",
-				value: false,
-			},
-			{
-				id: "O3",
-				option: "FACULTY OF MECHANICAL ENGINEERING",
-				value: false,
-			},
-		]
-	},
-	{
-		id: "03",
-		question: "Electrical appliance(s) you would bring",
-		type: "checkbox",
-		options: [
-			{
-				id: "kettle",
-				option: "Kettle",
-				value: true,
-			},
-			{
-				id: "iron",
-				option: "Iron",
-				value: false,
-			},
-			{
-				id: "floor-fan",
-				option: "Floor fan",
-				value: false,
-			},
-		]
-	}
-]
-
-
-export default function FormEdit() {
+export const FormEdit = ({ form }: {form: Form}) => {
+	const data: Question[] = form.questions;
 	const [focusedCard, setFocusedCard] = useState<string | null>(null)
 
 	const setCardOnFocus = (id: string) => {
@@ -192,9 +103,17 @@ export default function FormEdit() {
 
 	return (
 		<div>
-			<div>
-				<Separator />
+			<div className="py-3 px-4 flex items-center justify-between">
+				<div>
+					<GhostInput value="Hostel Registration"/>
+				</div>
+				<div className="flex items-center gap-3">
+					<Button variant={"outline"}>Preview</Button>
+					<Button>Save</Button>
+					<Button variant={"ghost"} size={"icon"}><EllipsisVerticalIcon /></Button>
+				</div>
 			</div>
+				<Separator />
 			<div className="flex flex-col my-12 mx-4 gap-5">
 				<Card>
 					<CardHeader>
@@ -209,8 +128,8 @@ export default function FormEdit() {
 						const isLastQuestion = index === (data.length - 1);
 
 						return (
-							<div key={question.id}>
-								<div className="pb-1 flex gap-1">
+							<div key={question.id} onFocus={() => setCardOnFocus(question.id)}>
+								<div className="pb-1 flex gap-1"> {/* NOTE: Might extract this part to `CardToolbar` or any suitable name*/}
 									<Button variant={"ghost"} size={"icon"} disabled={isFirstQuestion}><ChevronUp /></Button>
 									<Button variant={"ghost"} size={"icon"} disabled={isLastQuestion}><ChevronDown /></Button>
 									<Button variant={"ghost"} size={"icon"}>{locked ? <LockIcon /> : <UnlockIcon />}</Button>
@@ -220,7 +139,7 @@ export default function FormEdit() {
 								</div>
 								<Card
 									className={`${focused ? "shadow-md border-black border-2" : "shadow-none"}`}
-									onFocus={() => setCardOnFocus(question.id)}
+									onClick={() => setCardOnFocus(question.id)}
 								>
 									<CardHeader className="pb-1 flex flex-row items-baseline w-full gap-4">
 										{GhostTextarea({ value: question.question })}

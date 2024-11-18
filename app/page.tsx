@@ -1,4 +1,4 @@
-import { FormTable } from "@/components/FormTable";
+import { FormTable } from "@/app/_components/FormTable";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 

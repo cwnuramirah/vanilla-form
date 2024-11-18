@@ -36,36 +36,17 @@ import {
 	TableRow
 } from "@/components/ui/table"
 import Link from "next/link"
+import { FormSummary } from "@/lib/types"
+import { mockForms } from "@/lib/mocks/forms"
 
-const data: Forms[] = [
-	{
-		id: "m5gr84i9",
-		title: "Hostel Registration",
-		createdAt: "2024-10-24T08:06:14+08:00",
-		modifiedAt: "2024-10-29T09:24:09+08:00",
-	},
-	{
-		id: "3u1reuv4",
-		title: "Club Activity Application",
-		createdAt: "2024-11-08T02:47:29+08:00",
-		modifiedAt: "2024-11-08T02:47:29+08:00",
-	},
-	{
-		id: "derv1ws0",
-		title: "Student Vehicle Registration",
-		createdAt: "2024-11-06T02:37:35+08:00",
-		modifiedAt: "2024-10-28T04:20:15+08:00",
-	},
-];
+const formSummaries: FormSummary[] = mockForms.map((form) => ({
+	id: form.id,
+	title: form.title,
+	createdAt: form.createdAt,
+	modifiedAt: form.modifiedAt,
+  }));
 
-export type Forms = {
-	id: string;
-	title: string;
-	createdAt: string; // ISO 8601 formatted string
-	modifiedAt: string; // ISO 8601 formatted string
-};
-
-export const columns: ColumnDef<Forms>[] = [
+export const columns: ColumnDef<FormSummary>[] = [
 	{
 		id: "select",
 		header: ({ table }) => (
@@ -154,7 +135,7 @@ export function FormTable() {
 	const [rowSelection, setRowSelection] = React.useState({})
 
 	const table = useReactTable({
-		data,
+		data: formSummaries,
 		columns,
 		onSortingChange: setSorting,
 		onColumnFiltersChange: setColumnFilters,
