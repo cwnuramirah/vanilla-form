@@ -74,7 +74,7 @@ export const columns: ColumnDef<FormSummary>[] = [
 		header: "Title",
 		enableSorting: true,
 		cell: ({ row }) => (
-			<Link href={`/${encodeURIComponent(row.original.id)}/`} className="sentencecase font-medium">
+			<Link href={`/${encodeURIComponent(row.original.id)}/edit`} className="sentencecase font-medium">
 				{row.getValue("title")}
 			</Link>
 		),
