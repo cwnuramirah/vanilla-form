@@ -7,9 +7,11 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectSeparator, Select
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Question, Option, Form } from "@/lib/types";
-import { ChevronDown, ChevronUp, CopyPlusIcon, LockIcon, PlusIcon, SquarePlusIcon, Trash2Icon, UnlockIcon, XIcon } from "lucide-react";
+import { ChevronDown, ChevronUp, CopyIcon, EllipsisVerticalIcon, LockIcon, PlusIcon, SquarePlusIcon, Trash2Icon, UnlockIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { GhostInput, GhostTextarea } from "../../_components/ghost-input";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
 
 export const FormEdit = ({ form }: { form: Form }) => {
 	const questions: Question[] = form.questions;
@@ -82,12 +84,31 @@ export const FormEdit = ({ form }: { form: Form }) => {
 		}
 	}
 
-	return (
+	const shuffleOptions = (question: Question) => {
+		const type = question.type;
+		const haveOptions = type == "checkbox" || type == "radio";
 
-		<div className="flex flex-col my-12 mx-4 gap-5">
-			<Card>
+		if (haveOptions) {
+			return (
+				<DropdownMenuCheckboxItem
+					key={`${question.id}-shuffle`}
+					className="capitalize"
+					checked={true}
+				>
+					Shuffle option order
+				</DropdownMenuCheckboxItem>
+			);
+		}
+	}
+
+	return (
+		<div className="flex flex-col py-12 px-4 gap-5 lg:mx-[20vw]">
+			<Card
+				className={`${focusedCard === form.id ? "shadow-md border-black border-2" : "shadow-none"}`}
+				onClick={() => setCardOnFocus(form.id)}
+			>
 				<CardHeader>
-					{GhostTextarea({ value: "Hostel Registration" })}
+					{GhostTextarea({ value: form.title })}
 				</CardHeader>
 			</Card>
 			{
@@ -99,25 +120,21 @@ export const FormEdit = ({ form }: { form: Form }) => {
 
 					return (
 						<div key={question.id} onFocus={() => setCardOnFocus(question.id)}>
-							<div className="pb-1 flex gap-1"> {/* NOTE: Might extract this part to `CardToolbar` or any suitable name*/}
-								<Button variant={"ghost"} size={"icon"} disabled={isFirstQuestion}><ChevronUp /></Button>
-								<Button variant={"ghost"} size={"icon"} disabled={isLastQuestion}><ChevronDown /></Button>
-								<Button variant={"ghost"} size={"icon"}>{locked ? <LockIcon /> : <UnlockIcon />}</Button>
-								<Button variant={"ghost"} size={"icon"} disabled={locked}><Trash2Icon /></Button>
-								<Button variant={"ghost"} size={"icon"}><CopyPlusIcon /></Button>
-								<Button variant={"ghost"} size={"icon"}><SquarePlusIcon /></Button>
-							</div>
-							<Card
-								className={`${focused ? "shadow-md border-black border-2" : "shadow-none"}`}
-								onClick={() => setCardOnFocus(question.id)}
-							>
-								<CardHeader className="pb-1 flex flex-row items-baseline w-full gap-4">
-									{GhostTextarea({ value: question.question })}
+							{focused ?
+								<div className="flex flex-row justify-between"> {/* NOTE: Might extract this part into a component with any suitable name*/}
+									<div className="pb-1 flex gap-1">
+										<Button variant={"ghost"} size={"icon"} disabled={isFirstQuestion}><ChevronUp /></Button>
+										<Button variant={"ghost"} size={"icon"} disabled={isLastQuestion}><ChevronDown /></Button>
+										<Button variant={"ghost"} size={"icon"}>{locked ? <LockIcon /> : <UnlockIcon />}</Button>
+										<Button variant={"ghost"} size={"icon"} disabled={locked}><Trash2Icon /></Button>
+										<Button variant={"ghost"} size={"icon"}><CopyIcon /></Button>
+										<Button variant={"ghost"} size={"icon"}><SquarePlusIcon /></Button>
+									</div>
 									<Select>
 										<SelectTrigger className="w-[200px]">
-											<SelectValue placeholder="Choose" />
+											<SelectValue placeholder={question.type} />
 										</SelectTrigger>
-										<SelectContent>
+										<SelectContent align="end">
 											<SelectGroup>
 												<SelectItem value="short">Short Answer</SelectItem>
 												<SelectItem value="paragraph">Paragraph Answer</SelectItem>
@@ -127,13 +144,39 @@ export const FormEdit = ({ form }: { form: Form }) => {
 											</SelectGroup>
 										</SelectContent>
 									</Select>
+								</div> : null
+							}
+							<Card
+								className={`${focused ? "shadow-md border-black border-2" : "shadow-none"}`}
+								onClick={() => setCardOnFocus(question.id)}
+							>
+								<CardHeader className="pb-1 flex flex-row items-baseline w-full gap-4">
+									{GhostTextarea({ value: question.question })}
+
 								</CardHeader>
-								<CardContent><div className="px-4 py-2">{getAnswers(question, focused)}</div></CardContent>
-								<CardFooter>
+								<CardContent><div className="px-4">{getAnswers(question, focused)}</div></CardContent>
+								<CardFooter className="flex flex-row justify-end gap-3 mx-2">
 									<div className="flex items-center gap-3">
 										<Switch id={`${question.id}-required`} />
 										<label htmlFor={`${question.id}-required`}> Required</label>
 									</div>
+									<Separator orientation="vertical" className="h-9" />
+									<DropdownMenu>
+										<DropdownMenuTrigger asChild>
+											<Button variant="ghost" size={"icon"}>
+												<EllipsisVerticalIcon />
+											</Button>
+										</DropdownMenuTrigger>
+										<DropdownMenuContent align="end">
+											<DropdownMenuCheckboxItem
+												key={`${question.id}-description`}
+												checked={true}
+											>
+												Show description
+											</DropdownMenuCheckboxItem>
+											{shuffleOptions(question)}
+										</DropdownMenuContent>
+									</DropdownMenu>
 								</CardFooter>
 							</Card>
 						</div>
