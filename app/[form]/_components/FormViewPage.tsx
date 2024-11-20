@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link";
-import { GhostInput } from "./ghost-input";
+import { GhostInput } from "./GhostInput";
 import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon, EllipsisVerticalIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
