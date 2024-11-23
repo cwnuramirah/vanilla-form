@@ -25,7 +25,7 @@ export default function FormEditView() {
 						<DropdownMenuTrigger asChild>
 							<Button variant={"secondary"} className="rounded-l-none px-2"><ChevronDownIcon /></Button>
 						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
+						<DropdownMenuContent align="start">
 							<DropdownMenuItem>Short Answer</DropdownMenuItem>
 							<DropdownMenuItem>Paragraph Answer</DropdownMenuItem>
 
